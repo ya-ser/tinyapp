@@ -19,6 +19,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -51,6 +52,13 @@ app.get("/urls.json", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL
   delete urlDatabase[shortURL];
+  res.redirect('/urls');
+});
+
+app.post("/urls/:shortURL/edit", (req, res) => {
+  const newURL = req.body.newURL;
+  const shortURL = req.params.shortURL;
+  urlDatabase[shortURL] = newURL;
   res.redirect('/urls');
 });
 
