@@ -14,11 +14,11 @@
       <form method="POST" action="/logout">
       <span class="navbar-brand mr-2">Logged in as, <%= user.email %>!</span>
       <form class='form-inline' action='/logout' method='POST'>
-        <button type="submit" class="btn btn-primary">Logout</button>
+        <button type="submit" class="btn btn-success mb-1">Logout</button>
       </form>
       <% } else { %>
-        <span><a href="/login" class="btn btn-primary mr-3">Login</a></span> 
-        <span><a href="/register" class="btn btn-primary">Register</a></span>
+        <span><a href="/login" class="btn btn-success mr-3">Login</a></span> 
+        <span><a href="/register" class="btn btn-success">Register</a></span>
         </form>
         <% } %>
   </nav>
