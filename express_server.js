@@ -28,13 +28,35 @@ const users = {
   }
 };
 
+// ----------------------------  FUNCTIONS  ----------------------------
+
+function generateRandomString() {
+  return (Math.random() + 1).toString(36).substring(7);
+};
+
+const findUserByEmail = (email) => {
+  for(const userId in users) {
+    const user = users[userId];
+    if(user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
+
 // ----------------------------  POST  ----------------------------
 
 app.post("/register", (req, res) => {
   // creates a random string and assigns it as the new username
-  const userId = generateRandomString();
   const newEmail = req.body.email;
   const newPassword = req.body.password;
+
+  const user = findUserByEmail(newEmail);
+
+  if(user) {
+    return res.status(400).send("a user already exists with that email")
+  };
+  const userId = generateRandomString();
   users[userId] = {
     "id": userId,
     "email": newEmail,
@@ -152,9 +174,3 @@ app.get("/urls.json", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// ----------------------------  FUNCTIONS  ----------------------------
-
-function generateRandomString() {
-  return (Math.random() + 1).toString(36).substring(7);
-};
