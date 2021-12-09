@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css"/>
+  <%- include('partials/_headers') %>
+  <title>Login</title>
+</head>
+<body>
+  <main style="margin: 1em;">
+    <h1 class="text-center">Login</h1>
+        <form class="form" action="/login" method="POST" style="max-width: 500px; margin: 0 auto;">
+
+          <label for="email"><b>Email:</b></label>
+          <input type="email" class="form-control" placeholder="Enter Email" name="email" id="email" required>
+
+          <label for="psw" class="mt-2"><b>Password:</b></label>
+          <input type="password" class="form-control" placeholder="Enter Password" name="password" id="psw" required>
+          <hr>
+
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+          <p class="text-center mt-1">Don't have an account? <a href="/register">Sign up</a></p>
+        </form>
+  </main>
+</body>
+</html>

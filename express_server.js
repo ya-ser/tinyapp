@@ -46,6 +46,25 @@ const findUserByEmail = (email) => {
 
 // ----------------------------  POST  ----------------------------
 
+app.post("/login", (req, res) => {
+  // creates a random string and assigns it as the new username
+  const newEmail = req.body.email;
+  const newPassword = req.body.password;
+
+  const user = findUserByEmail(newEmail);
+
+  if(!user){
+    return res.status(400).send("a user with that email does not exist")
+  };
+
+  if(user.password !== newPassword) {
+    return res.status(400).send('password does not match')
+  };
+  res.cookie("username", user.id);
+  // routes user back to /urls logged in as the user who registered
+  res.redirect("/urls");
+});
+
 app.post("/register", (req, res) => {
   // creates a random string and assigns it as the new username
   const newEmail = req.body.email;
@@ -100,6 +119,15 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 });
 
 // ----------------------------  GET  ----------------------------
+
+app.get('/login', (req, res) => {
+  const userId = req.cookies["username"];
+  const user = users[userId];
+  const templateVars = {
+    user: user
+  };
+  res.render('login', templateVars);
+})
 
 app.get('/register', (req, res) => {
   // const userId = req.cookies["username"];
