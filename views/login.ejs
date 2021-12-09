@@ -13,7 +13,11 @@
   <main style="margin: 1em;">
     <h1 class="text-center">Login</h1>
         <form class="form" action="/login" method="POST" style="max-width: 500px; margin: 0 auto;">
-
+          <% if (loginError) { %>
+            <div class="alert alert-danger" role="alert">
+              <%=loginError%>
+            </div>
+          <% } %>
           <label for="email"><b>Email:</b></label>
           <input type="email" class="form-control" placeholder="Enter Email" name="email" id="email" required>
 

@@ -54,12 +54,17 @@ app.post("/login", (req, res) => {
   const user = findUserByEmail(newEmail);
 
   if(!user){
-    return res.status(400).send("a user with that email does not exist")
+    res.cookie("loginerror", "a user with that email does not exist");
+    res.redirect("/login")
+    // return res.status(400).send("a user with that email does not exist")
   };
 
   if(user.password !== newPassword) {
-    return res.status(400).send('password does not match')
+    res.cookie("loginerror", "password does not match");
+    res.redirect("/login")
+    // return res.status(400).send('password does not match')
   };
+  res.clearCookie('loginerror');
   res.cookie("username", user.id);
   // routes user back to /urls logged in as the user who registered
   res.redirect("/urls");
@@ -122,12 +127,14 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 
 app.get('/login', (req, res) => {
   const userId = req.cookies["username"];
+  const loginError = req.cookies["loginerror"];
   const user = users[userId];
   const templateVars = {
-    user: user
+    user: user,
+    loginError: loginError
   };
   res.render('login', templateVars);
-})
+});
 
 app.get('/register', (req, res) => {
   // const userId = req.cookies["username"];
@@ -163,8 +170,14 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
+// if user is not logged in
+  // redirect to login screen
   const userId = req.cookies["username"];
   const user = users[userId];
+
+  if (!user) {
+    res.redirect("/login");
+  };
 
   const templateVars = {
     urls: urlDatabase,
