@@ -9,8 +9,13 @@
   <title>TinyApp</title>
 </head>
 <body>
-  <main style="margin: 1em;">
+  <% if (user) { %>
+    <%- include('partials/_headers', {user: user}) %>
+  <% } else { %>
     <%- include('partials/_headers') %>
+  <% } %>
+  <main style="margin: 1em;">
+    
     <h3>My URLs</h3>
     <table class="table">
       <thead>

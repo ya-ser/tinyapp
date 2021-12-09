@@ -7,8 +7,12 @@
 </head>
 
 <body>
+  <% if (user) { %>
+    <%- include('partials/_headers', {user: user}) %>
+  <% } else { %>
+    <%- include('partials/_headers') %>
+  <% } %>
   <div class="card text-center">
-  <%- include('partials/_headers') %>
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>

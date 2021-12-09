@@ -12,7 +12,11 @@
 
   <body>
 
-    <%- include('partials/_headers') %>
+    <% if (user) { %>
+      <%- include('partials/_headers', {user: user}) %>
+    <% } else { %>
+      <%- include('partials/_headers') %>
+    <% } %>
 
     <main style="margin: 1em;">
       <h3>Create TinyURL</h3>
