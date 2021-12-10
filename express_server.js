@@ -1,5 +1,6 @@
 const { response } = require("express");// page was not loading without this
 const express = require("express");
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -73,13 +74,13 @@ app.post("/login", (req, res) => {
 
   const user = findUserByEmail(newEmail);
 
-  if(!user){
+  if (!user) {
     res.cookie("loginerror", "a user with that email does not exist");
     res.redirect("/login")
     // return res.status(400).send("a user with that email does not exist")
   };
 
-  if(user.password !== newPassword) {
+  if (!bcrypt.compareSync(newPassword, user.password)) {
     res.cookie("loginerror", "password does not match");
     res.redirect("/login")
     // return res.status(400).send('password does not match')
@@ -94,19 +95,24 @@ app.post("/register", (req, res) => {
   // creates a random string and assigns it as the new username
   const newEmail = req.body.email;
   const newPassword = req.body.password;
+  const hashedPassword = bcrypt.hashSync(newPassword, 10)
 
   const user = findUserByEmail(newEmail);
 
   if(user) {
-    return res.status(400).send("a user already exists with that email")
+    res.cookie("regError", "a user already exists with that email");
+    res.redirect("/register")
+    // return res.status(400).send("a user already exists with that email")
   };
   const userId = generateRandomString();
   users[userId] = {
     "id": userId,
     "email": newEmail,
-    "password": newPassword
+    "password": newPassword,
+    "password": hashedPassword
   };
   // saves the users info (id, email, and pwd)
+  res.clearCookie('regError');
   res.cookie("username", userId);
   // routes user back to /urls logged in as the user who registered
   res.redirect("/urls");
@@ -169,9 +175,11 @@ app.get('/login', (req, res) => {
 app.get('/register', (req, res) => {
   // const userId = req.cookies["username"];
   // const user = users[userId];
+  const registerError = req.cookies["regError"];
 
   const templateVars = {
-    user: null
+    user: null,
+    registerError: registerError
   };
   res.render('registration', templateVars);
 });
