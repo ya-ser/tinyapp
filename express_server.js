@@ -49,16 +49,16 @@ function generateRandomString() {
   return (Math.random() + 1).toString(36).substring(7);
 };
 
-const findUserByEmail = (email) => {
-  for(const userId in users) {
-    const user = users[userId];
-    //checking if user has email in the first place and seeing if that email is equal to the one we're passing in the for loop
-    if(user.hasOwnProperty("email") && user.email === email) {
-      return user;
-    }
-  }
-  return null;
-};
+// const findUserByEmail = (email) => {
+//   for(const userId in users) {
+//     const user = users[userId];
+//     //checking if user has email in the first place and seeing if that email is equal to the one we're passing in the for loop
+//     if(user.hasOwnProperty("email") && user.email === email) {
+//       return user;
+//     }
+//   }
+//   return null;
+// };
 
 const userURL = (userId) => {
   let result = {};
@@ -73,14 +73,25 @@ const userURL = (userId) => {
   return result;
 };
 
+const getUserByEmail = (email, database) => {
+  for (const userId in database) {
+    const user = database[userId];
+    if (user.hasOwnProperty("email") && user.email === email) {
+      //checking if user has email in the first place and seeing if that email is equal to the one we're passing in the for loop
+      return user;
+    }
+  }
+  return null;
+};
+
 // ----------------------------  POST  ----------------------------
 
 app.post("/login", (req, res) => {
   // creates a random string and assigns it as the new username
   const newEmail = req.body.email;
   const newPassword = req.body.password;
-
-  const user = findUserByEmail(newEmail);
+  const user = getUserByEmail(newEmail, users);
+  // const user = findUserByEmail(newEmail);
 
   if (!user) {
     return res.status(400).send("a user with that email does not exist")
@@ -99,8 +110,8 @@ app.post("/register", (req, res) => {
   const newEmail = req.body.email;
   const newPassword = req.body.password;
   const hashedPassword = bcrypt.hashSync(newPassword, 10)
-
-  const user = findUserByEmail(newEmail);
+  const user = getUserByEmail(newEmail, users);
+  // const user = findUserByEmail(newEmail);
 
   if(user) {
     return res.status(400).send("a user already exists with that email")
