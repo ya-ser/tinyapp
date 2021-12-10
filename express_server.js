@@ -1,7 +1,8 @@
 const { response } = require("express");// page was not loading without this
 const express = require("express");
 const bcrypt = require('bcryptjs');
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
+const { getUserByEmail } = require('./helpers');
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -49,17 +50,6 @@ function generateRandomString() {
   return (Math.random() + 1).toString(36).substring(7);
 };
 
-// const findUserByEmail = (email) => {
-//   for(const userId in users) {
-//     const user = users[userId];
-//     //checking if user has email in the first place and seeing if that email is equal to the one we're passing in the for loop
-//     if(user.hasOwnProperty("email") && user.email === email) {
-//       return user;
-//     }
-//   }
-//   return null;
-// };
-
 const userURL = (userId) => {
   let result = {};
   for (let shortURL in urlDatabase) {
@@ -73,16 +63,7 @@ const userURL = (userId) => {
   return result;
 };
 
-const getUserByEmail = (email, database) => {
-  for (const userId in database) {
-    const user = database[userId];
-    if (user.hasOwnProperty("email") && user.email === email) {
-      //checking if user has email in the first place and seeing if that email is equal to the one we're passing in the for loop
-      return user;
-    }
-  }
-  return null;
-};
+
 
 // ----------------------------  POST  ----------------------------
 
