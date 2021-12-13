@@ -116,30 +116,36 @@ app.post("/urls/new", (req, res) => {
 
 app.post('/logout', (req, res) => {
   // takes username in session and sets the value to nothing
-  req.session.username = null;
-  res.redirect('/urls/');
+  req.session = null;
+  res.redirect('/login');
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = req.session.username;
-  console.log('userId', userId);
   // check userID from cookies if they match with userID in database
     // if they match, delete url
     // else redirect user to /urls
   if (userId === urlDatabase[shortURL].userID) {
     // prevents others from deleting shorts if they are not the user logged in
     delete urlDatabase[shortURL];
+    res.redirect("/urls");
+  } else {
+    return res.status(403).send("Only the owner of this URL has permission to delete.");
   }
-  console.log(urlDatabase[shortURL]);
-  res.redirect('/urls');
 });
 
 app.post("/urls/:shortURL/edit", (req, res) => {
   const newURL = req.body.newURL;
   const shortURL = req.params.shortURL;
-  urlDatabase[shortURL].longURL = newURL;
-  res.redirect('/urls');
+  const userId = req.session.username;
+  if (userId === urlDatabase[shortURL].userID) {
+    // prevents others from edit shorts if they are not the user logged in
+    urlDatabase[shortURL].longURL = newURL;
+    res.redirect("/urls")
+  } else {
+    return res.status(403).send("Only the owner of this URL has permission to edit.");
+  }
 });
 
 // ----------------------------  GET  ----------------------------
@@ -163,12 +169,15 @@ app.get('/register', (req, res) => {
 app.get('/urls', (req, res) => {
   const userId = req.session.username;
   const user = users[userId];
-
-  const templateVars = {
-    urls: userURL(userId),
-    user: user
-  };
-  res.render('urls_index', templateVars);
+  if (!user) {
+    return res.status(403).send("must be log in or register to view");
+  } else {
+    const templateVars = {
+      urls: userURL(userId),
+      user: user
+    };
+    res.render('urls_index', templateVars);
+  }
 });
 
 app.get("/", (req, res) => {
@@ -181,19 +190,22 @@ app.get("/urls/new", (req, res) => {
 // if user is not logged in
   // redirect to login screen
   if (!user) {
-    res.redirect("/login");
+    return res.status(403).send("must login or register to view");
+  } else {
+    const templateVars = {
+      urls: urlDatabase,
+      user: user
+    };
+    res.render("urls_new", templateVars);
   }
-
-  const templateVars = {
-    urls: urlDatabase,
-    user: user
-  };
-  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const userId = req.session.username;
   const user = users[userId];
+  if (!user) {
+    return res.status(403).send("must login or register to view");
+  }
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
